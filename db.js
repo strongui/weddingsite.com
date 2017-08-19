@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-const connection = new Sequelize('weddingsite', 'testUser', 'test', {
+const connection = new Sequelize('weddingsite', 'weddingdbuser', 'test', {
   host: 'localhost',
   dialect: 'mysql',
 
@@ -12,10 +12,11 @@ const connection = new Sequelize('weddingsite', 'testUser', 'test', {
 });
 
 const User = connection.define('user', {
-  firstName: {
-    type: Sequelize.STRING
+  id: {
+    type: Sequelize.BIGINT,
+    primaryKey: true
   },
-  lastName: {
+  uuid: {
     type: Sequelize.STRING
   },
   email: {
@@ -23,23 +24,42 @@ const User = connection.define('user', {
     validate: {
       isEmail: true
     }
-  }
-});
-
-const Hobbies = connection.define('hobbies', {
-  name: {
+  },
+  password: {
     type: Sequelize.STRING
   },
-  userLink: {
+  firstName: {
+    type: Sequelize.STRING
+  },
+  lastName: {
+    type: Sequelize.STRING
+  },
+  birthdate: {
+    type: Sequelize.DATE
+  },
+  type: {
     type: Sequelize.INTEGER
   },
-  teamSport: {
+  deleted: {
     type: Sequelize.BOOLEAN
+  },
+});
+
+const userPreference = connection.define('user_preference', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true
+  },
+  userId: {
+    type: Sequelize.BIGINT
+  },
+  theme: {
+    type: Sequelize.STRING
   }
 });
 
-User.hasMany(Hobbies, {foreignKey: 'userLink'});
-Hobbies.belongsTo(User, {foreignKey: 'userLink'});
+User.hasOne(userPreference, {foreignKey: 'userId'});
+userPreference.belongsTo(User, {foreignKey: 'userId'});
 
 // force: true will drop the table if it already exists
 // User.sync({force: false}).then(() => {
