@@ -1,5 +1,5 @@
 import {
-  GraphQLBoolean,
+  // GraphQLBoolean,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -119,6 +119,30 @@ const User = new GraphQLObjectType({
   }
 });
 
+const Post = new GraphQLObjectType({
+  name: 'Post',
+  description: 'This represents a Post in the site',
+  fields: () => {
+    return {
+      id: {
+        type: GraphQLInt
+      },
+      uuid: {
+        type: GraphQLString
+      },
+      title: {
+        type: GraphQLString
+      },
+      votes: {
+        type: GraphQLInt
+      },
+      url: {
+        type: GraphQLString
+      }
+    };
+  }
+});
+
 const Query = new GraphQLObjectType({
   name: 'Query',
   description: 'This is a root Query',
@@ -139,6 +163,21 @@ const Query = new GraphQLObjectType({
         },
         resolve(root, args) {
           return Db.models.user.findAll({where: args});
+        }
+      },
+      allPosts: {
+        type: new GraphQLList(Post),
+        limit: 10,
+        args: {
+          offset: {
+            type: GraphQLInt
+          },
+          first: {
+            type: GraphQLInt
+          }
+        },
+        resolve(root, args) {
+          return Db.models.post.findAll({where: args});
         }
       },
       user_preferences: {

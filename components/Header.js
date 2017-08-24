@@ -1,18 +1,35 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-const linkStyle = {
-  marginRight: 15
-}
+export default ({ pathname }) => (
+  <header>
+    <Link prefetch href='/'>
+      <a className={pathname === '/' && 'is-active'}>Home</a>
+    </Link>
 
-const Header = () => (
-    <div>
-        <Link href="/">
-          <a style={linkStyle}>Home</a>
-        </Link>
-        <Link href="/about">
-          <a style={linkStyle}>About</a>
-        </Link>
-    </div>
+    <Link prefetch href='/about'>
+      <a className={pathname === '/about' && 'is-active'}>About</a>
+    </Link>
+
+    <Link prefetch href='/post'>
+      <a className={pathname === '/post' && 'is-active'}>Post</a>
+    </Link>
+
+    <Link prefetch href='/user'>
+      <a className={pathname === '/user' && 'is-active'}>User</a>
+    </Link>
+
+    <style>{`
+      header {
+        margin-bottom: 25px;
+      }
+      a {
+        font-size: 14px;
+        margin-right: 15px;
+        text-decoration: none;
+      }
+      .is-active {
+        text-decoration: underline;
+      }
+    `}</style>
+  </header>
 )
-
-export default Header
