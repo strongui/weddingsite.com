@@ -167,19 +167,30 @@ const Query = new GraphQLObjectType({
       },
       allPosts: {
         type: new GraphQLList(Post),
-        limit: 10,
         args: {
+          first: {
+            type: GraphQLInt
+          },
           offset: {
             type: GraphQLInt
           },
-          first: {
+          id: {
             type: GraphQLInt
+          },
+          title: {
+            type: GraphQLString
           }
         },
         resolve(root, args) {
-          return Db.models.post.findAll({where: args});
+          const {first: limit, offset, ...rest} = args;
+          return Db.models.post.findAll({
+            where: rest,
+            offset,
+            limit
+          });
         }
       },
+
       user_preferences: {
         type: new GraphQLList(UserPreference),
         args: {
