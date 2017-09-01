@@ -68,7 +68,7 @@ function PostList ({ data: { loading, error, allPosts, _allPostsMeta }, loadMore
 
 const allPosts = gql`
   query allPosts($first: Int!, $skip: Int!) {
-    allPosts(orderBy: createdAt_DESC, first: $first, skip: $skip) {
+    allPosts(orderBy: [["createdAt","desc"], ["title","asc"]], first: $first, skip: $skip) {
       id
       title
       votes

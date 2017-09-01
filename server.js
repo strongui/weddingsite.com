@@ -12,7 +12,6 @@ const handle = app.getRequestHandler();
 app.prepare()
 .then(() => {
   const server = express();
-  console.log('test...')
 
   server.use('/graphql',
     bodyParser.json(),
@@ -37,7 +36,7 @@ app.prepare()
     if (err) {
       throw err;
     }
-    console.log('> Ready on http://localhost:3000');
+    console.log(`> Ready on http://localhost:${port}`);
   });
 })
 .catch((ex) => {

@@ -6,8 +6,17 @@ import {
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLSchema,
-  GraphQLString,
+  GraphQLString
 } from 'graphql';
+import {
+  GraphQLEmail,
+  GraphQLURL,
+  GraphQLDateTime,
+  GraphQLLimitedString,
+  GraphQLPassword,
+  GraphQLUUID
+} from 'graphql-custom-types';
+
 import { Kind } from 'graphql/language';
 import Db from './db';
 
@@ -138,6 +147,15 @@ const Post = new GraphQLObjectType({
       },
       url: {
         type: GraphQLString
+      },
+      createdAt: {
+        type: GraphQLDateTime
+      },
+      updatedAt: {
+        type: GraphQLDateTime
+      },
+      deletedAt: {
+        type: GraphQLDateTime
       }
     };
   }
@@ -171,7 +189,7 @@ const Query = new GraphQLObjectType({
           first: {
             type: GraphQLInt
           },
-          offset: {
+          skip: {
             type: GraphQLInt
           },
           id: {
@@ -179,12 +197,16 @@ const Query = new GraphQLObjectType({
           },
           title: {
             type: GraphQLString
+          },
+          orderBy: {
+            type: new GraphQLList(new GraphQLList(GraphQLString))
           }
         },
         resolve(root, args) {
-          const {first: limit, offset, ...rest} = args;
+          const {first: limit, skip: offset, orderBy: order, ...rest} = args;
           return Db.models.post.findAll({
             where: rest,
+            order,
             offset,
             limit
           });
@@ -220,6 +242,9 @@ const UserMutation = new GraphQLObjectType({
       addUser: {
         type: User,
         args: {
+          uuid: {
+            type: new GraphQLNonNull(GraphQLString)
+          },
           firstName: {
             type: new GraphQLNonNull(GraphQLString)
           },
@@ -232,9 +257,26 @@ const UserMutation = new GraphQLObjectType({
         },
         resolve(source, args) {
           return Db.models.user.create({
+            uuid: args.uuid,
             firstName: args.firstName,
             lastName: args.lastName,
             email: args.email.toLowerCase()
+          });
+        }
+      },
+      deletePost: {
+        type: Post,
+        args: {
+          id: {
+            type: new GraphQLNonNull(GraphQLInt)
+          }
+        },
+        resolve(source, args) {
+          return Db.models.post.destroy({
+            where: {
+              id: args.id
+            },
+            limit: 1
           });
         }
       }

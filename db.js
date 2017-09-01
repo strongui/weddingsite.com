@@ -3,13 +3,34 @@ import Sequelize from 'sequelize';
 const connection = new Sequelize('weddingsite', 'weddingdbuser', 'test', {
   host: 'localhost',
   dialect: 'mysql',
-
   pool: {
     max: 5,
     min: 0,
     idle: 10000
   }
 });
+
+const Post = connection.define('post', {
+  id: {
+    type: Sequelize.BIGINT,
+    primaryKey: true
+  },
+  uuid: {
+    type: Sequelize.STRING
+  },
+  title: {
+    type: Sequelize.STRING,
+  },
+  description: {
+    type: Sequelize.STRING,
+  },
+  votes: {
+    type: Sequelize.INTEGER
+  },
+  url: {
+    type: Sequelize.STRING
+  }
+}, {paranoid: true});
 
 const User = connection.define('user', {
   id: {
@@ -58,27 +79,7 @@ const userPreference = connection.define('user_preference', {
   }
 });
 
-const Post = connection.define('post', {
-  id: {
-    type: Sequelize.BIGINT,
-    primaryKey: true
-  },
-  uuid: {
-    type: Sequelize.STRING
-  },
-  title: {
-    type: Sequelize.STRING,
-  },
-  votes: {
-    type: Sequelize.INTEGER
-  },
-  url: {
-    type: Sequelize.STRING
-  },
-  deleted: {
-    type: Sequelize.BOOLEAN
-  },
-});
+
 
 User.hasOne(userPreference, {foreignKey: 'userId'});
 userPreference.belongsTo(User, {foreignKey: 'userId'});
